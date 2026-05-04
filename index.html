@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math MCQ Master</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* App Wrapper to keep everything aligned */
+        .app-wrapper {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            min-height: 100vh;
+        }
+
+        /* Add to Home Screen Banner */
+        .a2hs-banner {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .a2hs-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .a2hs-content p {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #e0e7ff;
+        }
+        .a2hs-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 10px;
+        }
+        .a2hs-actions label {
+            margin: 0;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #e0e7ff;
+        }
+        .a2hs-actions button {
+            background: white;
+            color: var(--primary);
+            margin: 0;
+            padding: 6px 16px;
+            font-size: 14px;
+            border-radius: 99px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .a2hs-actions button:hover {
+            background: #f3f4f6;
+        }
+
+        /* Top Navigation Tab */
+        .top-nav {
+            background-color: var(--card-bg);
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+            margin: 0;
+            border-radius: 0;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .nav-btn:hover {
+            background-color: #f9fafb;
+            color: var(--primary);
+        }
+
+        .container {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease-in-out;
+            flex-grow: 1;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2, h3 { margin-top: 0; color: var(--primary); }
+        
+        label { font-weight: 600; margin-top: 12px; margin-bottom: 4px; display: block; }
+        
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 16px; margin-bottom: 12px;
+        }
+
+        button {
+            background-color: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px;
+            font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.2s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+
+        .cancel-btn { background-color: var(--danger); }
+        .cancel-btn:hover { background-color: #dc2626; }
+        
+        .icon-btn {
+            background: none; border: none; color: var(--text-light); font-size: 18px; 
+            padding: 4px 8px; cursor: pointer; margin: 0; border-radius: 50%; box-shadow: none;
+        }
+        .icon-btn:hover { background-color: #e5e7eb; color: var(--text-main); }
+
+        /* Profile UI */
+        .profile-card {
+            background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 20px;
+            text-align: center; position: relative;
+        }
+        
+        .profile-display h2 { margin: 0; color: var(--text-main); font-size: 28px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .profile-display p { color: var(--text-light); font-size: 18px; margin: 8px 0 0 0; }
+
+        /* Stats UI */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 16px;
+        }
+        .stat-card {
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px;
+            border-left: 4px solid var(--success);
+        }
+        .stat-card.weak { border-left-color: var(--danger); }
+        .stat-header { font-weight: bold; font-size: 14px; color: var(--text-main); display: flex; justify-content: space-between; }
+        .stat-bar-bg { background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; width: 100%; }
+        .stat-bar-fill { height: 100%; background: var(--success); border-radius: 4px; transition: width 0.5s ease; }
+        .stat-bar-fill.weak { background: var(--danger); }
+        .stat-details { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); font-weight: 600; }
+
+        /* Configuration UI */
+        .topic-group { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #f9fafb; }
+        .topic-header { font-weight: bold; font-size: 18px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .subtopics { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-left: 24px; }
+        
+        .subtopics.tables-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+        
+        .checkbox-label { display: flex; align-items: center; gap: 6px; font-weight: normal; margin: 0; cursor: pointer; }
+
+        /* Quiz UI */
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--bg); }
+        .question-text { font-size: 32px; font-weight: bold; text-align: center; margin: 30px 0; letter-spacing: 2px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .option-btn { background-color: var(--bg); color: var(--text-main); border: 2px solid #d1d5db; margin-top: 0; padding: 16px; font-size: 20px; }
+        .option-btn:hover { background-color: #e5e7eb; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.wrong { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Review UI */
+        .review-item { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .review-q { font-weight: bold; font-size: 18px; }
+        .review-ans { font-size: 16px; }
+        .wrong-ans { color: var(--danger); text-decoration: line-through; margin-right: 8px; }
+        .correct-ans { color: var(--success); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+    <div id="a2hs-banner" class="a2hs-banner">
+        <div class="a2hs-content">
+            <span style="font-size: 28px;">📱</span>
+            <div>
+                <strong style="font-size: 16px;">Install Math Master!</strong>
+                <p>Tap the <b>three dots (⋮)</b> or <b>Share icon</b> in your browser and select <b>"Add to Home Screen"</b> to play anytime like a real app!</p>
+            </div>
+        </div>
+        <div class="a2hs-actions">
+            <label>
+                <input type="checkbox" id="a2hs-dont-show"> Don't show next time
+            </label>
+            <button onclick="dismissA2HS()">Got it!</button>
+        </div>
+    </div>
+
+    <div class="top-nav" id="topNav">
+        <button class="nav-btn active" id="nav-profile" onclick="handleNavClick('profile')">Profile & Stats</button>
+        <button class="nav-btn" id="nav-home" onclick="handleNavClick('config')">Play Quiz</button>
+    </div>
+
+    <div class="container">
+        <div id="screen-profile" class="screen active">
+            
+            <div class="profile-card">
+                <div id="profile-display" class="profile-display" style="display: none;">
+                    <h2>
+                        <span id="display-name">User</span> 
+                        <button class="icon-btn" onclick="toggleProfileEdit()" title="Edit Profile">✏️</button>
+                    </h2>
+                    <p>Age: <span id="display-age">8</span> years old</p>
+                </div>
+
+                <div id="profile-edit">
+                    <h3 style="margin-bottom: 16px; color: var(--text-main);">Welcome! Please set up your profile.</h3>
+                    <label for="userName">Your Name</label>
+                    <input type="text" id="userName" placeholder="e.g. Alex" required>
+                    
+                    <label for="userAge">Your Age (Years)</label>
+                    <input type="number" id="userAge" placeholder="e.g. 10" min="4" max="99" required>
+                    
+                    <button onclick="saveProfile()" style="width: 100%;">Save Profile</button>
+                </div>
+            </div>
+
+            <div id="profile-history" style="display: none;">
+                <h2>Your Math Progress</h2>
+                <p style="font-size: 14px; color: var(--text-light); margin-top: -10px;">Track your accuracy and speed across different topics.</p>
+                <div id="all-stats-list" class="stats-grid"></div>
+            </div>
+            
+            <div id="no-stats-msg" style="text-align: center; padding: 40px 20px; color: var(--text-light);">
+                <h3>No stats yet!</h3>
+                <p>Go to the <b>Play Quiz</b> tab to start practicing and build your stats.</p>
+            </div>
+        </div>
+
+        <div id="screen-config" class="screen">
+            <h2>Select Math Topics</h2>
+            <div id="topics-container"></div>
+            
+            <label>Questions per quiz</label>
+            <input type="number" id="numQuestions" value="10" min="5" max="50">
+
+            <label>Timer Difficulty</label>
+            <select id="timerMode" onchange="toggleCustomTimer()">
+                <option value="ideal">Ideal (Calculated by Age)</option>
+                <option value="master">Master (Faster)</option>
+                <option value="expert">Expert (Extremely Fast)</option>
+                <option value="custom">Custom Timer (per question)</option>
+                <option value="none">No Timer</option>
+            </select>
+            
+            <div id="customTimerDiv" style="display: none;">
+                <label>Seconds per question</label>
+                <input type="number" id="customTime" value="10" min="3" max="120">
+            </div>
+
+            <button onclick="startQuiz()" style="padding: 16px; font-size: 18px; margin-top: 20px;">Start Quiz</button>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+            <div class="header-bar">
+                <div id="quiz-progress" style="font-weight: bold; color: var(--text-light);">Q: 1/10</div>
+                <div id="quiz-timer" style="font-weight: bold; color: var(--danger); font-size: 18px;">--:--</div>
+                <button class="cancel-btn" onclick="cancelQuiz()" style="margin: 0; padding: 6px 12px; font-size: 14px;">Cancel Quiz</button>
+            </div>
+            
+            <div id="quiz-question" class="question-text">5 + 5 = ?</div>
+            
+            <div id="quiz-options" class="options-grid">
+                </div>
+        </div>
+
+        <div id="screen-results" class="screen">
+            <h1 style="text-align: center;">Quiz Complete!</h1>
+            <div class="profile-card" style="padding: 30px;">
+                <h2 style="font-size: 32px; color: var(--text-main); margin-bottom: 8px;">
+                    Score: <span id="final-score" style="color: var(--primary);">0</span> / <span id="total-score">0</span>
+                </h2>
+                <p id="result-message" style="font-size: 18px; font-weight: bold; color: var(--text-light);"></p>
+            </div>
+
+            <div id="review-container" style="display: none; margin-bottom: 20px;">
+                <h3 style="color: var(--danger);">Review Mistakes:</h3>
+                <div id="mistakes-list"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: auto;">
+                <button onclick="goToProfile()" style="background-color: var(--text-light); flex: 1;">View Stats</button>
+                <button onclick="goToConfig()" style="flex: 2;">Play Another Quiz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Generate Table Topics from 2 to 30
+    const tableSubtopics = [];
+    for(let i = 2; i <= 30; i++) {
+        tableSubtopics.push(`Table ${i}`);
+    }
+
+    // System Data & Config
+    const mathStructure = {
+        'Addition': ['1 Digit + 1 Digit', '2 Digit + 1 Digit', '2 Digit + 2 Digit', '3 Digit + 1 Digit', '3 Digit + 2 Digit', '3 Digit + 3 Digit'],
+        'Subtraction': ['1 Digit - 1 Digit', '2 Digit - 1 Digit', '2 Digit - 2 Digit', '3 Digit - 1 Digit', '3 Digit - 2 Digit', '3 Digit - 3 Digit'],
+        'Multiplication': ['1 Digit × 1 Digit', '2 Digit × 1 Digit', '2 Digit × 2 Digit', '3 Digit × 1 Digit'],
+        'Division': ['1 Digit ÷ 1 Digit', '2 Digit ÷ 1 Digit', '3 Digit ÷ 1 Digit', '3 Digit ÷ 2 Digit'],
+        'Tables': tableSubtopics
+    };
+
+    let userProfile = { name: '', age: '', stats: {} };
+    let currentQuiz = {
+        questions: [], currentIndex: 0, score: 0, timerInterval: null, timeLeft: 0, 
+        selectedSubtopics: [], questionStartTime: 0, mistakes: [], inProgress: false
+    };
+
+    // A2HS Banner Logic
+    function dismissA2HS() {
+        const dontShowCheckbox = document.getElementById('a2hs-dont-show');
+        if (dontShowCheckbox && dontShowCheckbox.checked) {
+            localStorage.setItem('mathMasterHideA2HS', 'true');
+        }
+        document.getElementById('a2hs-banner').style.display = 'none';
+    }
+
+    // Initialization & Local Storage
+    function loadLocalData() {
+        const saved = localStorage.getItem('mathMasterData');
+        if (saved) {
+            userProfile = JSON.parse(saved);
+        }
+    }
+
+    function saveLocalData() {
+        localStorage.setItem('mathMasterData', JSON.stringify(userProfile));
+    }
+
+    function initApp() {
+        // Check if banner should be hidden
+        if (localStorage.getItem('mathMasterHideA2HS') === 'true') {
+            document.getElementById('a2hs-banner').style.display = 'none';
+        }
+
+        loadLocalData();
+        initTopicsUI();
+        
+        if (!userProfile.name || !userProfile.age) {
+            goToProfile(true); // Force edit mode
+        } else {
+            goToProfile(false); // Display mode
+        }
+    }
+
+    // Profile Management
+    function toggleProfileEdit() {
+        document.getElementById('userName').value = userProfile.name;
+        document.getElementById('userAge').value = userProfile.age;
+        document.getElementById('profile-display').style.display = 'none';
+        document.getElementById('profile-edit').style.display = 'block';
+    }
+
+    function saveProfile() {
+        const nameInput = document.getElementById('userName').value.trim();
+        const ageInput = parseInt(document.getElementById('userAge').value);
+        
+        if (!nameInput || isNaN(ageInput)) {
+            alert('Please enter a valid Name and Age to continue.');
+            return;
+        }
+
+        userProfile.name = nameInput;
+        userProfile.age = ageInput;
+        saveLocalData();
+        
+        renderProfileDisplay();
+    }
+
+    function renderProfileDisplay() {
+        document.getElementById('profile-edit').style.display = 'none';
+        
+        document.getElementById('display-name').innerText = userProfile.name;
+        document.getElementById('display-age').innerText = userProfile.age;
+        document.getElementById('profile-display').style.display = 'block';
+        
+        renderProfileStats();
+    }
+
+    // Navigation
+    function handleNavClick(target) {
+        if (currentQuiz.inProgress) {
+            if (confirm("You have a quiz in progress. Cancel it?")) {
+                cancelQuiz(target);
+            }
+            return;
+        }
+        
+        // Prevent playing if profile isn't set up
+        if (target === 'config' && (!userProfile.name || !userProfile.age)) {
+            alert('Please save your Profile first before playing a quiz!');
+            goToProfile(true);
+            return;
+        }
+
+        target === 'profile' ? goToProfile(false) : goToConfig();
+    }
+
+    function updateNavState(activeId) {
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+        if(activeId) document.getElementById(activeId).classList.add('active');
+    }
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function goToProfile(forceEdit = false) {
+        updateNavState('nav-profile');
+        showScreen('screen-profile');
+        
+        if (forceEdit || !userProfile.name) toggleProfileEdit();
+        else renderProfileDisplay();
+    }
+
+    function goToConfig() {
+        updateNavState('nav-home');
+        showScreen('screen-config');
+    }
+
+    // Initialize Checkboxes UI
+    function initTopicsUI() {
+        const container = document.getElementById('topics-container');
+        if (container.innerHTML !== '') return; 
+        
+        for (const [topic, subtopics] of Object.entries(mathStructure)) {
+            const group = document.createElement('div');
+            group.className = 'topic-group';
+            
+            const gridClass = topic === 'Tables' ? 'subtopics tables-grid' : 'subtopics';
+
+            group.innerHTML = `
+                <div class="topic-header">
+                    <input type="checkbox" id="topic_${topic}" onchange="toggleCategory('${topic}')">
+                    <label for="topic_${topic}" style="margin:0;">${topic}</label>
+                </div>
+                <div class="${gridClass}" id="subtopics_${topic}">
+                    ${subtopics.map((sub) => `
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="subtopic-cb sub_${topic}" value="${topic}|${sub}">
+                            ${sub}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(group);
+        }
+    }
+
+    function toggleCategory(topic) {
+        const isChecked = document.getElementById(`topic_${topic}`).checked;
+        const checkboxes = document.querySelectorAll(`.sub_${topic}`);
+        checkboxes.forEach(cb => cb.checked = isChecked);
+    }
+
+    function toggleCustomTimer() {
+        const mode = document.getElementById('timerMode').value;
+        document.getElementById('customTimerDiv').style.display = mode === 'custom' ? 'block' : 'none';
+    }
+
+    // Question Generation
+    function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function generateQuestion(topicInfo) {
+        const [topic, subtype] = topicInfo.split('|');
+        let num1, num2, answer, symbol;
+
+        const getBounds = (digits) => {
+            if (digits === 1) return [1, 9];
+            if (digits === 2) return [10, 99];
+            if (digits === 3) return [100, 999];
+            return [1, 9];
+        };
+
+        if (topic === 'Tables') {
+            symbol = '×';
+            const tableNum = parseInt(subtype.replace('Table ', ''));
+            
+            num1 = tableNum;
+            num2 = randomInt(1, 10);
+            answer = num1 * num2;
+
+            if (Math.random() > 0.5) {
+                [num1, num2] = [num2, num1];
+            }
+
+        } else {
+            const match = subtype.match(/(\d) Digit .* (\d) Digit/);
+            const d1 = match ? parseInt(match[1]) : 1;
+            const d2 = match ? parseInt(match[2]) : 1;
+
+            num1 = randomInt(getBounds(d1)[0], getBounds(d1)[1]);
+            num2 = randomInt(getBounds(d2)[0], getBounds(d2)[1]);
+
+            if (topic === 'Addition') { symbol = '+'; answer = num1 + num2; } 
+            else if (topic === 'Subtraction') {
+                symbol = '-';
+                if (num1 < num2) [num1, num2] = [num2, num1];
+                answer = num1 - num2;
+            } 
+            else if (topic === 'Multiplication') { symbol = '×'; answer = num1 * num2; } 
+            else if (topic === 'Division') {
+                symbol = '÷'; answer = num1; num1 = answer * num2;
+            }
+        }
+
+        let options = [answer];
+        while (options.length < 4) {
+            let variance = randomInt(-10, 10);
+            if (variance === 0) variance = 2;
+            
+            if (topic === 'Tables' && Math.random() > 0.5) {
+                variance = (randomInt(-2, 2) || 1) * parseInt(subtype.replace('Table ', '')); 
+            }
+            
+            let wrongAns = answer + variance;
+            if (wrongAns >= 0 && !options.includes(wrongAns)) options.push(wrongAns);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        return { text: `${num1} ${symbol} ${num2} = ?`, answer: answer, options: options, subtypeId: topicInfo };
+    }
+
+    function calculateTimeLimit(age, mode) {
+        let base;
+        if (age < 7) base = 20;
+        else if (age <= 10) base = 15;
+        else if (age <= 14) base = 10;
+        else base = 7;
+
+        if (mode === 'master') return Math.max(4, Math.floor(base * 0.65));
+        if (mode === 'expert') return Math.max(3, Math.floor(base * 0.45));
+        return base; 
+    }
+
+    // Quiz Execution
+    function startQuiz() {
+        const checkedBoxes = Array.from(document.querySelectorAll('.subtopic-cb:checked'));
+        if (checkedBoxes.length === 0) { alert('Please select at least one subtopic.'); return; }
+
+        currentQuiz.selectedSubtopics = checkedBoxes.map(cb => cb.value);
+        const totalQs = parseInt(document.getElementById('numQuestions').value) || 10;
+        
+        currentQuiz.questions = [];
+        for (let i = 0; i < totalQs; i++) {
+            const randomSubtopic = currentQuiz.selectedSubtopics[Math.floor(Math.random() * currentQuiz.selectedSubtopics.length)];
+            currentQuiz.questions.push(generateQuestion(randomSubtopic));
+        }
+
+        currentQuiz.currentIndex = 0;
+        currentQuiz.score = 0;
+        currentQuiz.mistakes = [];
+        currentQuiz.inProgress = true;
+
+        const mode = document.getElementById('timerMode').value;
+        if (mode === 'none') currentQuiz.timeLimit = 0;
+        else if (mode === 'custom') currentQuiz.timeLimit = parseInt(document.getElementById('customTime').value) || 10;
+        else currentQuiz.timeLimit = calculateTimeLimit(userProfile.age, mode);
+
+        updateNavState(null); // Clear nav selection visually during quiz
+        showScreen('screen-quiz');
+        loadQuestion();
+    }
+
+    function cancelQuiz(target = 'config') {
+        clearInterval(currentQuiz.timerInterval);
+        currentQuiz.inProgress = false;
+        target === 'profile' ? goToProfile(false) : goToConfig();
+    }
+
+    function loadQuestion() {
+        if (currentQuiz.currentIndex >= currentQuiz.questions.length) {
+            endQuiz();
+            return;
+        }
+
+        const q = currentQuiz.questions[currentQuiz.currentIndex];
+        document.getElementById('quiz-progress').innerText = `Question: ${currentQuiz.currentIndex + 1} / ${currentQuiz.questions.length}`;
+        document.getElementById('quiz-question').innerText = q.text;
+
+        const optionsDiv = document.getElementById('quiz-options');
+        optionsDiv.innerHTML = '';
+        
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt, btn);
+            optionsDiv.appendChild(btn);
+        });
+
+        if (!userProfile.stats[q.subtypeId]) {
+            userProfile.stats[q.subtypeId] = { attempted: 0, correct: 0, totalTime: 0 };
+        }
+
+        currentQuiz.questionStartTime = Date.now();
+
+        if (currentQuiz.timeLimit > 0) {
+            currentQuiz.timeLeft = currentQuiz.timeLimit;
+            updateTimerDisplay();
+            clearInterval(currentQuiz.timerInterval);
+            currentQuiz.timerInterval = setInterval(() => {
+                currentQuiz.timeLeft--;
+                updateTimerDisplay();
+                if (currentQuiz.timeLeft <= 0) {
+                    processTimeOut(q);
+                }
+            }, 1000);
+        } else {
+            document.getElementById('quiz-timer').innerText = "Unlimited Time";
+        }
+    }
+
+    function updateTimerDisplay() {
+        const timerUI = document.getElementById('quiz-timer');
+        timerUI.innerText = `⏳ ${currentQuiz.timeLeft}s`;
+        timerUI.style.color = currentQuiz.timeLeft <= 3 ? 'var(--danger)' : 'var(--text-main)';
+    }
+
+    function processTimeOut(q) {
+        clearInterval(currentQuiz.timerInterval);
+        
+        userProfile.stats[q.subtypeId].attempted++;
+        userProfile.stats[q.subtypeId].totalTime += currentQuiz.timeLimit; 
+        
+        currentQuiz.mistakes.push({ question: q.text, chosen: "Ran out of time", correct: q.answer });
+
+        if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => {
+            b.disabled = true;
+            if (parseInt(b.innerText) === q.answer) b.classList.add('correct');
+        });
+
+        setTimeout(() => {
+            currentQuiz.currentIndex++;
+            loadQuestion();
+        }, 500);
+    }
+
+    function checkAnswer(selectedOpt, btnElement) {
+        clearInterval(currentQuiz.timerInterval);
+        const q = currentQuiz.questions[currentQuiz.currentIndex];
+        const isCorrect = (selectedOpt === q.answer);
+        
+        const timeTaken = (Date.now() - currentQuiz.questionStartTime) / 1000;
+        
+        userProfile.stats[q.subtypeId].attempted++;
+        userProfile.stats[q.subtypeId].totalTime += timeTaken;
+
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => {
+            b.disabled = true;
+            if (parseInt(b.innerText) === q.answer) b.classList.add('correct');
+        });
+
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            currentQuiz.score++;
+            userProfile.stats[q.subtypeId].correct++;
+        } else {
+            btnElement.classList.add('wrong');
+            if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]); 
+            currentQuiz.mistakes.push({ question: q.text, chosen: selectedOpt, correct: q.answer });
+        }
+
+        setTimeout(() => {
+            currentQuiz.currentIndex++;
+            loadQuestion();
+        }, 400); 
+    }
+
+    // Results & Profile Stats Rendering
+    function endQuiz() {
+        currentQuiz.inProgress = false;
+        saveLocalData(); // Save stats to local storage
+        updateNavState(null); // Clear nav on results screen
+        showScreen('screen-results');
+        
+        document.getElementById('final-score').innerText = currentQuiz.score;
+        document.getElementById('total-score').innerText = currentQuiz.questions.length;
+        
+        const msg = document.getElementById('result-message');
+        const percentage = (currentQuiz.score / currentQuiz.questions.length) * 100;
+        if (percentage >= 80) msg.innerText = `Awesome job, ${userProfile.name}!`;
+        else if (percentage >= 50) msg.innerText = `Good effort, ${userProfile.name}. Keep practicing!`;
+        else msg.innerText = `Don't give up, ${userProfile.name}. Practice makes perfect!`;
+
+        renderReviewSection();
+    }
+
+    function renderReviewSection() {
+        const container = document.getElementById('review-container');
+        const list = document.getElementById('mistakes-list');
+        list.innerHTML = '';
+
+        if (currentQuiz.mistakes.length === 0) {
+            container.style.display = 'block';
+            list.innerHTML = '<p style="color: var(--success); font-weight: bold; padding: 10px; background: #d1fae5; border-radius: 8px;">Perfect score! No mistakes to review.</p>';
+            return;
+        }
+
+        container.style.display = 'block';
+        currentQuiz.mistakes.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'review-item';
+            div.innerHTML = `
+                <div class="review-q">${m.question}</div>
+                <div class="review-ans">
+                    <span class="wrong-ans">${m.chosen}</span>
+                    <span class="correct-ans">${m.correct}</span>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function renderProfileStats() {
+        const container = document.getElementById('all-stats-list');
+        const historySection = document.getElementById('profile-history');
+        const noStatsMsg = document.getElementById('no-stats-msg');
+        
+        container.innerHTML = '';
+
+        if (Object.keys(userProfile.stats).length === 0) {
+            historySection.style.display = 'none';
+            noStatsMsg.style.display = 'block';
+            return;
+        }
+
+        historySection.style.display = 'block';
+        noStatsMsg.style.display = 'none';
+        
+        for (const [subtype, data] of Object.entries(userProfile.stats)) {
+            if (data.attempted > 0) {
+                const accuracy = Math.round((data.correct / data.attempted) * 100);
+                const avgTime = (data.totalTime / data.attempted).toFixed(1);
+                const isWeak = data.attempted >= 3 && accuracy < 60;
+                
+                const card = document.createElement('div');
+                card.className = `stat-card ${isWeak ? 'weak' : ''}`;
+                const prettyName = subtype.replace('|', ' ➔ ');
+                
+                card.innerHTML = `
+                    <div class="stat-header">
+                        <span>${prettyName}</span>
+                        <span style="color: ${isWeak ? 'var(--danger)' : 'var(--success)'}">${accuracy}%</span>
+                    </div>
+                    <div class="stat-bar-bg">
+                        <div class="stat-bar-fill ${isWeak ? 'weak' : ''}" style="width: ${accuracy}%"></div>
+                    </div>
+                    <div class="stat-details">
+                        <span>${data.correct} / ${data.attempted} correct</span>
+                        <span>Avg: ${avgTime}s</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+    }
+
+    // Start App
+    window.onload = initApp;
+
+</script>
+
+</body>
+</html>
