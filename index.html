@@ -208,6 +208,15 @@
         
         .checkbox-label { display: flex; align-items: center; gap: 6px; font-weight: normal; margin: 0; cursor: pointer; }
 
+        /* Notes UI */
+        .notes-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; margin-top: 10px; }
+        .notes-table th { background-color: var(--primary); color: white; padding: 10px 4px; border: 1px solid #d1d5db; position: sticky; top: 0;}
+        .notes-table td { padding: 8px 4px; border: 1px solid #e5e7eb; }
+        .notes-table tr:nth-child(even) { background-color: #f9fafb; }
+        .notes-table td:first-child { font-weight: bold; background-color: #f3f4f6; color: var(--text-main); border-right: 2px solid #d1d5db; position: sticky; left: 0;}
+        .notes-buttons { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .notes-buttons button { flex: 1; min-width: 100px; margin-top: 0; padding: 10px; font-size: 14px; }
+
         /* Quiz UI */
         .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--bg); }
         .question-text { font-size: 32px; font-weight: bold; text-align: center; margin: 30px 0; letter-spacing: 2px; }
@@ -248,6 +257,7 @@
     <div class="top-nav" id="topNav">
         <button class="nav-btn active" id="nav-profile" onclick="handleNavClick('profile')">Profile & Stats</button>
         <button class="nav-btn" id="nav-home" onclick="handleNavClick('config')">Play Quiz</button>
+        <button class="nav-btn" id="nav-notes" onclick="handleNavClick('notes')">View Notes</button>
     </div>
 
     <div class="container">
@@ -308,6 +318,21 @@
             </div>
 
             <button onclick="startQuiz()" style="padding: 16px; font-size: 18px; margin-top: 20px;">Start Quiz</button>
+        </div>
+
+        <div id="screen-notes" class="screen">
+            <h2>Multiplication Tables Notes</h2>
+            <p style="color: var(--text-light); font-size: 14px; margin-top: -10px;">Select a range below to view the tables.</p>
+            
+            <div class="notes-buttons">
+                <button onclick="renderTablesNote(1, 10)">Tables 1 - 10</button>
+                <button onclick="renderTablesNote(11, 20)">Tables 11 - 20</button>
+                <button onclick="renderTablesNote(21, 30)">Tables 21 - 30</button>
+            </div>
+
+            <div id="tables-note-container" style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e5e7eb; max-height: 60vh;">
+                <p style="color: var(--text-light); text-align: center; padding: 20px;">Select a range to view tables here.</p>
+            </div>
         </div>
 
         <div id="screen-quiz" class="screen">
@@ -448,13 +473,15 @@
         }
         
         // Prevent playing if profile isn't set up
-        if (target === 'config' && (!userProfile.name || !userProfile.age)) {
-            alert('Please save your Profile first before playing a quiz!');
+        if ((target === 'config' || target === 'notes') && (!userProfile.name || !userProfile.age)) {
+            alert('Please save your Profile first before navigating!');
             goToProfile(true);
             return;
         }
 
-        target === 'profile' ? goToProfile(false) : goToConfig();
+        if (target === 'profile') goToProfile(false);
+        else if (target === 'notes') goToNotes();
+        else goToConfig();
     }
 
     function updateNavState(activeId) {
@@ -478,6 +505,11 @@
     function goToConfig() {
         updateNavState('nav-home');
         showScreen('screen-config');
+    }
+
+    function goToNotes() {
+        updateNavState('nav-notes');
+        showScreen('screen-notes');
     }
 
     // Initialize Checkboxes UI
@@ -518,6 +550,26 @@
     function toggleCustomTimer() {
         const mode = document.getElementById('timerMode').value;
         document.getElementById('customTimerDiv').style.display = mode === 'custom' ? 'block' : 'none';
+    }
+
+    // Render Tables Notes Function
+    function renderTablesNote(start, end) {
+        let html = '<table class="notes-table"><thead><tr><th>×</th>';
+        for (let i = start; i <= end; i++) {
+            html += `<th>${i}</th>`;
+        }
+        html += '</tr></thead><tbody>';
+
+        for (let row = 1; row <= 10; row++) {
+            html += `<tr><td>${row}</td>`;
+            for (let col = start; col <= end; col++) {
+                html += `<td>${row * col}</td>`;
+            }
+            html += '</tr>';
+        }
+        html += '</tbody></table>';
+        
+        document.getElementById('tables-note-container').innerHTML = html;
     }
 
     // Question Generation
@@ -567,12 +619,26 @@
         }
 
         let options = [answer];
+        
+        // Loophole fix: If the question has 2 or 3 digits (and not division or standard tables), 
+        // force at least one option to have the exact same unit digit.
+        let isMultiDigit = (topic !== 'Tables' && topic !== 'Division' && (subtype.includes('2 Digit') || subtype.includes('3 Digit')));
+        let forcedSameUnit = false;
+
         while (options.length < 4) {
-            let variance = randomInt(-10, 10);
-            if (variance === 0) variance = 2;
+            let variance;
             
-            if (topic === 'Tables' && Math.random() > 0.5) {
-                variance = (randomInt(-2, 2) || 1) * parseInt(subtype.replace('Table ', '')); 
+            if (isMultiDigit && !forcedSameUnit) {
+                // Ensure variance is a multiple of 10 so the unit digit remains identical
+                variance = (randomInt(1, 5) * 10) * (Math.random() > 0.5 ? 1 : -1);
+                forcedSameUnit = true;
+            } else {
+                variance = randomInt(-10, 10);
+                if (variance === 0) variance = 2;
+                
+                if (topic === 'Tables' && Math.random() > 0.5) {
+                    variance = (randomInt(-2, 2) || 1) * parseInt(subtype.replace('Table ', '')); 
+                }
             }
             
             let wrongAns = answer + variance;
@@ -627,7 +693,10 @@
     function cancelQuiz(target = 'config') {
         clearInterval(currentQuiz.timerInterval);
         currentQuiz.inProgress = false;
-        target === 'profile' ? goToProfile(false) : goToConfig();
+        
+        if (target === 'profile') goToProfile(false);
+        else if (target === 'notes') goToNotes();
+        else goToConfig();
     }
 
     function loadQuestion() {
